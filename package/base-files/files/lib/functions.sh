@@ -414,8 +414,12 @@ include() {
 }
 
 ipcalc() {
-	set -- $(ipcalc.sh "$@")
-	[ $? -eq 0 ] && export -- "$@"
+	local OUTPUT
+	# must split "local OUTPUT" and "OUTPUT=..." into two lines, otherwise ipcalc.sh exit code will be lost
+	OUTPUT="$(ipcalc.sh "$@")"
+	[ $? -eq 0 ] || return $?
+	set -- $OUTPUT
+	export -- "$@"
 }
 
 find_mtd_index() {
